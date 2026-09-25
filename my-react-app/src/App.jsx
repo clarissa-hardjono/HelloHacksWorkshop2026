@@ -12,6 +12,16 @@ function App() {
     { name: 'Ground', color: 'bg-amber-100 text-amber-800 ring-amber-300' },
   ]
 
+  function formatTypeNames(typeNames) {
+    const names = typeNames.map((typeName) => typeName.charAt(0).toUpperCase() + typeName.slice(1))
+
+    if (names.length < 2) {
+      return names[0] || 'none'
+    }
+
+    return `${names.slice(0, -1).join(', ')}, and ${names.at(-1)}`
+  }
+
   async function getMatchup(type) {
     try {
       const response = await fetch(
@@ -75,9 +85,16 @@ function App() {
           })}
         </div>
 
-        <p className="mt-6 min-h-6 text-sm font-semibold text-[var(--color-pokemon-blue)]" aria-live="polite">
-          {error || (matchup && JSON.stringify(matchup))}
-        </p>
+        <div className="mt-6 min-h-6 text-sm font-semibold text-[var(--color-pokemon-blue)]" aria-live="polite">
+          {error && <p>{error}</p>}
+          {matchup && (
+            <div className="space-y-2">
+              <p>Against a {selectedType}-type Pokemon:</p>
+              <p>Your attacks deal half damage to {formatTypeNames(matchup.half_damage_to)}.</p>
+              <p>Watch out for {formatTypeNames(matchup.double_damage_from)} attacks. They deal double damage.</p>
+            </div>
+          )}
+        </div>
       </section>
     </main>
   )
