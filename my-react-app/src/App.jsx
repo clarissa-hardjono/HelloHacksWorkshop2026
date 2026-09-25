@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 function App() {
   const [selectedType, setSelectedType] = useState('')
+  const [matchup, setMatchup] = useState(null)
+  const [error, setError] = useState('')
 
   const types = [
     { name: 'Fire', color: 'bg-orange-100 text-orange-800 ring-orange-300' },
@@ -10,14 +12,36 @@ function App() {
     { name: 'Ground', color: 'bg-amber-100 text-amber-800 ring-amber-300' },
   ]
 
-  function getMatchup(type) {
-  // API CALL WILL GO HERE, AND WE WILL RETURN THE RESPONSE
-    return `Fake API response: You are fighting a ${type}-type Pokémon.`;
+  async function getMatchup(type) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/matchup?type=${encodeURIComponent(type)}`,
+      )
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`)
+      }
+
+      return await response.json()
+    } catch (requestError) {
+      console.error('Matchup request failed:', requestError)
+      return null
+    }
   }
 
-  function handleTypeClick(type) {
-    const response = getMatchup(type);
-    setSelectedType(response);
+  async function handleTypeClick(type) {
+    setSelectedType(type)
+    setError('')
+
+    const response = await getMatchup(type)
+
+    if (!response) {
+      setMatchup(null)
+      setError('Unable to load matchup data.')
+      return
+    }
+
+    setMatchup(response)
   }
 
   return (
@@ -52,7 +76,7 @@ function App() {
         </div>
 
         <p className="mt-6 min-h-6 text-sm font-semibold text-[var(--color-pokemon-blue)]" aria-live="polite">
-          {selectedType}
+          {error || (matchup && JSON.stringify(matchup))}
         </p>
       </section>
     </main>
