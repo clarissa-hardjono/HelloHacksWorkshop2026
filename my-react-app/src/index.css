@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+	--color-pokeball-red: #e3350d;
+	--color-pokeball-dark: #1f2937;
+	--color-pokemon-yellow: #ffcb05;
+	--color-pokemon-blue: #3b4cca;
+	--font-display: "Trebuchet MS", "Arial Rounded MT Bold", sans-serif;
+	font-family: var(--font-display);
+	color: var(--color-pokeball-dark);
+	background: #f8fafc;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	min-width: 320px;
+	min-height: 100vh;
+	margin: 0;
+}
+
+button {
+	font: inherit;
+}
